@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from user.models import User
+from user.models import CustomUser
 
 
 class RegisterForm(UserCreationForm):
@@ -15,7 +15,7 @@ class RegisterForm(UserCreationForm):
         help_text="Enter the same password as before, for verification."
     )
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['username', 'email', 'password1', 'password2']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Username'}),

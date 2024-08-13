@@ -9,7 +9,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             
-            return redirect('home')
+            return redirect('/')
     else:
         form = RegisterForm()
     return render(request, 'register.html', {'form': form})
@@ -23,7 +23,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect('/')
             else:
                 form.add_error(None, 'Invalid username or password')
     else:
@@ -32,4 +32,4 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('/log/')
+    return redirect('/log')

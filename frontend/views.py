@@ -6,4 +6,7 @@ def index(request):
     return redirect('login')
 
 def home(request):
-    return HttpResponse('Home page ' + request.user.username)
+    return redirect('/back/balance')
+
+def transaction(request):
+    return render(request, 'transaction.html')

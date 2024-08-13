@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra %} 
+{% comment %} <link rel="stylesheet" href="{% static 'css/.css' %}">  {% endcomment %}
+<script src="{% static 'js/transaction.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<h2 id="title"></h2>
+<h4 id='balance-from'></h4>
+<h4 id='balance-to'></h4>
+<input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+{% endblock %}

@@ -32,6 +32,19 @@ def transaction(request):
     return render(request, 'transaction.html', {'transactions': transactions})
 
 @login_required(login_url='/log/')
+def budget(request):
+    if request.method == 'POST':
+        amount = Decimal(request.POST['amount'])
+        goal_name = request.POST['goal_name']
+        if amount <= 0:
+            return HttpResponse('Invalid amount')
+        request.user.create_budget(goal_name, amount)
+
+    budgets = request.user.get_budgets()
+    return HttpResponse(budgets)
+    return render(request, 'budget.html', {'budgets': budgets})
+
+@login_required(login_url='/log/')
 def delete_transaction(request, id):
     transaction = request.user.get_transactions().get(id=id)
     transaction.delete()

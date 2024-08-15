@@ -27,6 +27,15 @@ class CustomUser(AbstractUser):
     def get_transactions(self):
         return Transaction.objects.filter(user=self)
     
+    def create_budget(self, goal, amount):
+        BudgetGoal.objects.create(user=self, goal_name=goal, amount=amount)
+    
+    def delete_budget(self, goal):
+        BudgetGoal.objects.get(user=self, goal_name=goal).delete()
+
+    def get_budgets(self):
+        return BudgetGoal.objects.filter(user=self)
+    
 class Transaction(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user', null=True)
@@ -44,3 +53,11 @@ class Transaction(models.Model):
         if self.user:
             self.balance = self.user.balance
         super().save(*args, **kwargs)
+
+class BudgetGoal(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='budget_goals')
+    goal_name = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.goal_name + ' - ' + str(self.amount)

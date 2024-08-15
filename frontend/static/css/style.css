@@ -1,0 +1,28 @@
+body, ul {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #1f1d1d;
+    padding: 10px;
+}
+
+nav ul {
+    list-style-type: none;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #f7f7f7;
+}
+
+main {
+    margin-top: 20px;
+}
+

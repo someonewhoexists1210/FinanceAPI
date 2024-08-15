@@ -3,14 +3,16 @@
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
-    {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra %}{% endblock %}
 </head>
 <body>
     <header>
         <nav>
             <ul>
-                
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'transaction' %}">Transaction</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
             </ul>
         </nav>
     </header>

@@ -14,12 +14,19 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
     
+    def transfer(self, to, amount):
+        self.balance -= amount
+        to.balance += amount
+        self.save()
+        to.save()
+        Transaction.objects.create(fromUser=self, toUser=to, amount=amount)
+    
     def get_transactions(self):
         return Transaction.objects.filter(models.Q(fromUser=self) | models.Q(toUser=self))
     
 class Transaction(models.Model):
-    fromUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user')
-    toUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user')
+    fromUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user', null=True)
+    toUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user', null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
 

@@ -8,6 +8,22 @@
 
 {% block content %}
 <h2 id="title">Transaction History</h2>
+<div id="transaction-form">
+    <h3>Make a Transaction</h3>
+    <form method="POST" action="{% url 'transaction' %}">
+        {% csrf_token %}
+        <label for="amount">Amount:</label>
+        <input type="number" name="amount" id="amount" required>
+        <br>
+        <label for="fromUser">From:</label>
+        <input type="text" name="fromUser" id="fromUser" required>
+        <br>
+        <label for="toUser">To:</label>
+        <input type="text" name="toUser" id="toUser" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
 
 <div id='list'>
     <table>
@@ -27,6 +43,7 @@
         {% endfor %}
     </table>
 </div>
+
 
 <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
 {% endblock %}

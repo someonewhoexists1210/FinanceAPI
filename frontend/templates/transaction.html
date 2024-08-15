@@ -36,6 +36,8 @@
             <th>From</th>
             <th>To</th>
             <th>Date</th>
+            <th>Balance</th>
+            <th>Action</th>
         </tr>
         {% for transaction in transactions %}
             <tr>
@@ -48,6 +50,8 @@
                     <td>{{ transaction.user }}</td>
                 {% endif %}
                 <td>{{ transaction.date }}</td>
+                <td>{{ transaction.balance}}</td>
+                <td><button class="delete" data-id="{{ transaction.id }}">Delete</button></td>
             </tr>
         {% endfor %}
     </table>

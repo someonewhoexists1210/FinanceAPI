@@ -30,3 +30,9 @@ def transaction(request):
 
     transactions = request.user.get_transactions()
     return render(request, 'transaction.html', {'transactions': transactions})
+
+@login_required(login_url='/log/')
+def delete_transaction(request, id):
+    transaction = request.user.get_transactions().get(id=id)
+    transaction.delete()
+    return redirect('/transaction/')

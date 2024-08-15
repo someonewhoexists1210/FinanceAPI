@@ -15,12 +15,16 @@
         <label for="amount">Amount:</label>
         <input type="number" name="amount" id="amount" required>
         <br>
-        <label for="fromUser">From:</label>
-        <input type="text" name="fromUser" id="fromUser" required>
+        <label for="source">Source:</label>
+        <input name="source" id="source" required>
         <br>
-        <label for="toUser">To:</label>
-        <input type="text" name="toUser" id="toUser" required>
+        <label for="receiving">Receiving:</label>
+        <select name='recieving' id='receiving'>
+            <option value='1'>Yes</option>
+            <option value='0'>No</option>
+        </select>
         <br>
+
         <button type="submit">Submit</button>
     </form>
 </div>
@@ -36,8 +40,13 @@
         {% for transaction in transactions %}
             <tr>
                 <td>{{ transaction.amount }}</td>
-                <td>{{ transaction.fromUser }}</td>
-                <td>{{ transaction.toUser }}</td>
+                {% if transaction.recieving %}
+                    <td>{{ transaction.source }}</td>
+                    <td>{{ transaction.user }}</td>
+                {% else %}
+                    <td>{{ transaction.source }}</td>
+                    <td>{{ transaction.user }}</td>
+                {% endif %}
                 <td>{{ transaction.date }}</td>
             </tr>
         {% endfor %}

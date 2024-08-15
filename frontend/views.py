@@ -12,26 +12,21 @@ def index(request):
 @login_required(login_url='/log/')
 def transaction(request):
     if request.method == 'POST':
-        fromUser = request.POST.get('fromUser')
-        toUser = request.POST.get('toUser')
-        amount = Decimal(request.POST.get('amount'))
+        amount = Decimal(request.POST['amount'])
+        isReciever = request.POST['recieving'] == '1'
 
-        if fromUser != request.user.username and toUser != request.user.username:
-            return HttpResponse('Can\'t transfer to self', status=400)
-        
+        if amount <= 0:
+            return HttpResponse('Invalid amount')
+
         try:
-            fromUser = User.objects.get(username=fromUser)
-        except User.DoesNotExist:
-            return HttpResponse('From User not found', status=404)
-        try:
-            toUser = User.objects.get(username=toUser)
-        except User.DoesNotExist:
-            return HttpResponse('To User not found', status=404)
-        
-        # if fromUser.balance < amount:
-        #     return HttpResponse(fromUser.username + ' has insufficient funds ' + fromUser.password, status=400)
-        #     return HttpResponse('Insufficient funds', status=400)
-        
-        fromUser.transfer(toUser, amount)    
+            if isReciever:
+                request.user.recieve(request.POST.get('source', 'Unknown'), amount)
+            else:
+                if amount > request.user.balance:
+                    return HttpResponse('Insufficient balance')
+                request.user.transfer(request.POST.get('source', 'Unknown'), amount)
+        except Exception as e:
+            return HttpResponse(str(e))
+
     transactions = request.user.get_transactions()
     return render(request, 'transaction.html', {'transactions': transactions})

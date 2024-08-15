@@ -16,19 +16,24 @@ class CustomUser(AbstractUser):
     
     def transfer(self, to, amount):
         self.balance -= amount
-        to.balance += amount
         self.save()
-        to.save()
-        Transaction.objects.create(fromUser=self, toUser=to, amount=amount)
-    
+        Transaction.objects.create(user=self, source=to, amount=amount)
+
+    def recieve(self, fromUser, amount):
+        self.balance += amount
+        self.save()
+        Transaction.objects.create(user=self, source=fromUser, amount=amount, isReciever=True)
+
     def get_transactions(self):
-        return Transaction.objects.filter(models.Q(fromUser=self) | models.Q(toUser=self))
+        return Transaction.objects.filter(user=self)
     
 class Transaction(models.Model):
-    fromUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user', null=True)
-    toUser = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user', null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user', null=True)
+    source = models.CharField(max_length=100, default='Unknown')
+    isReciever = models.BooleanField(default=False)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Transaction: {self.amount} - {self.date}"
+        return f'''Transaction: {str(self) if self.isReciever else self.source}{self.amount} 
+        -> {self.source if self.isReciever else str(self)} --- {self.date}'''

@@ -8,4 +8,4 @@ def index(request):
     return render(request, 'balance.html', {'balance': request.user.balance})
 
 def transaction(request):
-    return render(request, 'transaction.html')
+    return redirect('http://localhost:8000/back/transaction/')

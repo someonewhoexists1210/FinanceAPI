@@ -7,10 +7,26 @@
 {% endblock %}
 
 {% block content %}
-<h2 id="title"></h2>
-<div>
-    <h4><span id='balance-from'></span> <span id='balance-to'></span></h4>
-    
+<h2 id="title">Transaction History</h2>
+
+<div id='list'>
+    <table>
+        <tr>
+            <th>Amount</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Date</th>
+        </tr>
+        {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.amount }}</td>
+                <td>{{ transaction.fromUser }}</td>
+                <td>{{ transaction.toUser }}</td>
+                <td>{{ transaction.date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 </div>
+
 <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
 {% endblock %}

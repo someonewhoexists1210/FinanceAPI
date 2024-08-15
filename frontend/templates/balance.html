@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra %}
+    <link rel="stylesheet" href="{% static 'css/balance.css' %}">
+{% endblock %}
+
+{% block title %}
+    Account Balance
+{% endblock %}
+
+{% block content %}
+    <h1 class="balance-heading">Account Balance</h1>
+    <p class="balance-amount">Your current account balance is <b> ${{ balance }} </b> </p>
+{% endblock %}

@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     fetch('/back/balance').then(response => response.json())
-    .then(data => from.innerHTML = data.balance + ' € =>');
+    .then(data => from.innerHTML = '$' + data.balance + ' =>');
     fetch('/back/transaction/', options).then(response => {
         if (response.status === 200) {
             title.innerHTML = 'Transaction Successful';
-            response.json().then(data => to.innerHTML = data.balance + ' €');
+            response.json().then(data => to.innerHTML = '$' + data.balance);
         } else {
             title.innerHTML = 'Transaction Failed';
             to.innerHTML = 'Error';

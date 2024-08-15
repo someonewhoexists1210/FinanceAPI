@@ -2,13 +2,15 @@
 {% load static %}
 
 {% block extra %} 
-{% comment %} <link rel="stylesheet" href="{% static 'css/.css' %}">  {% endcomment %}
+<link rel="stylesheet" href="{% static 'css/transaction.css' %}"> 
 <script src="{% static 'js/transaction.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 <h2 id="title"></h2>
-<h4 id='balance-from'></h4>
-<h4 id='balance-to'></h4>
+<div>
+    <h4><span id='balance-from'></span> <span id='balance-to'></span></h4>
+    
+</div>
 <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
 {% endblock %}

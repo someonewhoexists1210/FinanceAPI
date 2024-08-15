@@ -17,5 +17,3 @@ def transaction(request):
         except Exception as e:
             print(e)
             return HttpResponse('Transaction failed', status=400)
-def balance(request):
-    return JsonResponse({'balance': request.user.balance})

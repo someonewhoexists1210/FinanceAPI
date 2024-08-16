@@ -29,10 +29,33 @@
 
 <div id='list'>
     <h3>Your Budgets</h3>
-    <canvas id='budgetChart'></canvas>
+    {% for budget in budgets %}
+        <div class="budget-item">
+            <h3>{{ budget.goal_name }}</h3>
+            <canvas id="chart-{{ budget.id }}" width="400" height="400"></canvas>
+            <p>Amount: ${{ budget.amount }}</p>
+        </div>
+    {% endfor %}
+    <table>
+        <tr>
+            <th>Goal</th>
+            <th>Amount</th>
+            <th>Spent</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+        {% for budget in budgets %}
+            <tr>
+                <td>{{ budget.goal_name }}</td>
+                <td>{{ budget.amount }}</td>
+                <td>{{ budget.spent }}</td>
+                <td>{{ budget.date }}</td>
+                <td><button class="delete" data-id="{{ budget.id }}">Delete</button></td>
+            </tr>
+        {% endfor %}
+    </table>
 </div>
 
 <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
-<input type="hidden" id="budget_data" value="{{ budget_data }}">
-
+<input type="hidden" id="budgets-data" value="{{ budgets_json }}">
 {% endblock %}

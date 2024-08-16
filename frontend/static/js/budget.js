@@ -1,29 +1,47 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log(document.getElementById('budget_data').value)
-    const budgetData = JSON.parse(document.getElementById('budget_data').value);
+    const charts = {};
+    document.querySelectorAll('.delete').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const budgetId = this.dataset.id;
+            fetch(`/delete-budget/${budgetId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.getElementById('csrf-token').value,
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    this.closest('tr').remove();
+                    charts[budgetId].destroy();
+                    document.getElementById(`chart-${budgetId}`).parentElement.remove();
+                }
+            });
+        })
+    });
 
-    const labels = budgetData.map(budget => budget.goal_name);
-    const data = budgetData.map(budget => parseFloat(budget.amount));
 
-    const ctx = document.getElementById('budgetChart').getContext('2d');
-    const budgetChart = new Chart(ctx, {
-        type: 'bar', 
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Budget Amounts',
-                data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    const budgetsElement = document.getElementById('budgets-data');
+    const budgets = JSON.parse(budgetsElement.value);
+    budgets.forEach(budget => {
+        const ctx = document.getElementById(`chart-${budget.id}`).getContext('2d');
+        charts[budget.id] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Spent', 'Remaining'],
+                datasets: [{
+                    data: [budget.spent, budget.amount - budget.spent],
+                    backgroundColor: ['#FF6384', '#36A2EB'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
                 }
             }
-        }
+        });
     });
 });
+

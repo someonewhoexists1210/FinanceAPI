@@ -25,7 +25,7 @@ def transaction(request):
             else:
                 if amount > request.user.balance:
                     return HttpResponse('Insufficient balance')
-                request.user.transfer(request.POST.get('source', 'Unknown'), amount)
+                request.user.transfer(request.POST.get('source', 'Unknown'), amount, request.POST['category'])
         except Exception as e:
             return HttpResponse(str(e))
 
@@ -42,13 +42,18 @@ def budget(request):
             return HttpResponse('Invalid amount')
         request.user.create_budget(goal_name, amount)
 
-    budgets = request.user.get_budgets()
-    print(budgets.values('goal_name', 'amount'))
-    budget_data = json.dumps(list(budgets.values('goal_name', 'amount')), cls=DjangoJSONEncoder)
-    return render(request, 'budget.html', {'budgets': budgets, 'budget_data': budget_data})
+    budgets = list(request.user.get_budgets().values('id', 'goal_name', 'amount', 'spent'))
+    budgets_json = json.dumps(budgets, cls=DjangoJSONEncoder)
+    return render(request, 'budget.html', {'budgets': budgets, 'budgets_json': budgets_json})
 
 @login_required(login_url='/log/')
 def delete_transaction(request, id):
     transaction = request.user.get_transactions().get(id=id)
     transaction.delete()
     return redirect('/transaction/')
+
+@login_required(login_url='/log/')
+def delete_budget(request, id):
+    budget = request.user.get_budgets().get(id=id)
+    budget.delete()
+    return redirect('/budget/')

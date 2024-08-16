@@ -14,10 +14,11 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
     
-    def transfer(self, to, amount):
+    def transfer(self, to, amount, category):
         self.balance -= amount
         self.save()
-        Transaction.objects.create(user=self, source=to, amount=amount)
+        category = BudgetGoal.objects.get(user=self, goal_name=category)
+        Transaction.objects.create(user=self, source=to, amount=amount, category=category)
 
     def recieve(self, fromUser, amount):
         self.balance += amount
@@ -36,25 +37,8 @@ class CustomUser(AbstractUser):
     def get_budgets(self):
         return BudgetGoal.objects.filter(user=self)
     
-class Transaction(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user', null=True)
-    source = models.CharField(max_length=100, default='Unknown')
-    isReciever = models.BooleanField(default=False)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(auto_now_add=True)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
-    def __str__(self):
-        return f'''Transaction: {str(self) if self.isReciever else self.source}{self.amount} 
-        -> {self.source if self.isReciever else str(self)} --- {self.date}'''
-    
-    def save(self, *args, **kwargs):
-        if self.user:
-            self.balance = self.user.balance
-        super().save(*args, **kwargs)
-
 class BudgetGoal(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     goal_name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -63,3 +47,26 @@ class BudgetGoal(models.Model):
 
     def __str__(self):
         return self.goal_name
+    
+class Transaction(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user', null=True)
+    source = models.CharField(max_length=100, default='Unknown')
+    isReciever = models.BooleanField(default=False)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    category = models.ForeignKey(BudgetGoal, on_delete=models.SET_NULL, null=True, related_name='transactions')
+
+    def __str__(self):
+        return f'''Transaction: {str(self) if self.isReciever else self.source}{self.amount} 
+        -> {self.source if self.isReciever else str(self)} --- {self.date}'''
+    
+    def save(self, *args, **kwargs):
+        if self.user:
+            self.balance = self.user.balance
+        if self.category and not self.isReciever:
+            self.category.spent += self.amount
+            self.category.save()
+        super().save(*args, **kwargs)
+

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Finance{% endblock %}
+
+{% block content %}
+    {% for goal in goals %}
+        <h2>{{ goal.goal_name }}</h2>
+        <p>Amount: {{ goal.target_amount }}</p>
+        <p>Start Date: {{ goal.created_at }}</p>
+        <p>End Date: {{ goal.due_date }}</p>
+        <p>Completed: {{ goal.current_amount }}</p>
+    {% endfor %}
+    <form method="POST" action="{% url 'finance_goals' %}">
+        {% csrf_token %}
+        <label for="goal_name">Goal Name:</label>
+        <input type="text" id="goal_name" name="goal_name" required><br>
+        <label for="amount">Target Amount:</label>
+        <input type="number" id="amount" name="amount" required><br>
+        <label for="due_date">Due Date:</label>
+        <input type="date" id="due_date" name="due_date" required><br>
+        <input type="submit" value="Create Goal">
+    </form>
+{% endblock %}

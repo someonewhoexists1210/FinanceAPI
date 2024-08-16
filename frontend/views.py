@@ -14,6 +14,7 @@ def transaction(request):
     if request.method == 'POST':
         amount = Decimal(request.POST['amount'])
         isReciever = request.POST['recieving'] == '1'
+        print(request.POST['category'])
 
         if amount <= 0:
             return HttpResponse('Invalid amount')
@@ -33,7 +34,8 @@ def transaction(request):
             return HttpResponse(str(e))
 
     transactions = request.user.get_transactions()
-    return render(request, 'transaction.html', {'transactions': transactions})
+    categories = BudgetGoal.objects.filter(user=request.user).values('goal_name')
+    return render(request, 'transaction.html', {'transactions': transactions, 'categories': categories})
 
 
 @login_required(login_url='/log/')

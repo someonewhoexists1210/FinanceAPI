@@ -19,7 +19,12 @@
         <input name="source" id="source" required>
         <br>
         <label for="category">Category:</label>
-        <input type="text" name="category" id="category" value='None' required>
+        <select name='category' id='category'>
+            <option value='None'>-------</option>
+            {% for cat in categories%}
+                <option value="{{ cat.goal_name }}">{{ cat.goal_name }}</option>
+            {% endfor %}
+        </select>
         <br>
         <label for="receiving">Receiving:</label>
         <select name='recieving' id='receiving'>
@@ -49,8 +54,8 @@
                     <td>{{ transaction.source }}</td>
                     <td>{{ transaction.user }}</td>
                 {% else %}
-                    <td>{{ transaction.source }}</td>
                     <td>{{ transaction.user }}</td>
+                    <td>{{ transaction.source }}</td>
                 {% endif %}
                 <td>{{ transaction.date }}</td>
                 <td>{{ transaction.balance}}</td>

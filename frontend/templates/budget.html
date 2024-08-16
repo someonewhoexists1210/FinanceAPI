@@ -23,19 +23,16 @@
     </form>
 </div>
 
-<div id="chart-container">
-    <canvas id="budgetChart"></canvas>
-</div>
-
 <div id='list'>
     <h3>Your Budgets</h3>
-    {% for budget in budgets %}
-        <div class="budget-item">
-            <h3>{{ budget.goal_name }}</h3>
-            <canvas id="chart-{{ budget.id }}" width="400" height="400"></canvas>
-            <p>Amount: ${{ budget.amount }}</p>
-        </div>
-    {% endfor %}
+    <div id="chart-container">
+        {% for budget in budgets %}
+            <div class="chart-wrapper">
+                <canvas id="chart-{{ budget.id }}" width="400" height="400"></canvas>
+                <p>{{ budget.goal_name }}</p>
+            </div>
+        {% endfor %}
+    </div>
     <table>
         <tr>
             <th>Goal</th>
@@ -49,7 +46,7 @@
                 <td>{{ budget.goal_name }}</td>
                 <td>{{ budget.amount }}</td>
                 <td>{{ budget.spent }}</td>
-                <td>{{ budget.date }}</td>
+                <td>{{ budget.date_created }}</td>
                 <td><button class="delete" data-id="{{ budget.id }}">Delete</button></td>
             </tr>
         {% endfor %}

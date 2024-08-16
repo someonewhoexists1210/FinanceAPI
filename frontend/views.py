@@ -42,7 +42,7 @@ def budget(request):
             return HttpResponse('Invalid amount')
         request.user.create_budget(goal_name, amount)
 
-    budgets = list(request.user.get_budgets().values('id', 'goal_name', 'amount', 'spent'))
+    budgets = list(request.user.get_budgets().values('id', 'goal_name', 'amount', 'spent', 'date_created'))
     budgets_json = json.dumps(budgets, cls=DjangoJSONEncoder)
     return render(request, 'budget.html', {'budgets': budgets, 'budgets_json': budgets_json})
 

@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const budgetsElement = document.getElementById('budgets-data');
     const budgets = JSON.parse(budgetsElement.value);
+    console.log(budgets);
     budgets.forEach(budget => {
         const ctx = document.getElementById(`chart-${budget.id}`).getContext('2d');
         charts[budget.id] = new Chart(ctx, {

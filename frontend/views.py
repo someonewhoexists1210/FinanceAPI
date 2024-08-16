@@ -1,8 +1,7 @@
 from decimal import Decimal
 import json
-from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
-from user.models import CustomUser as User
+from user.models import CustomUser, BudgetGoal, Transaction
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
@@ -25,7 +24,11 @@ def transaction(request):
             else:
                 if amount > request.user.balance:
                     return HttpResponse('Insufficient balance')
-                request.user.transfer(request.POST.get('source', 'Unknown'), amount, request.POST['category'])
+                if not request.POST['category'] or request.POST['category'] == 'None':
+                    cat = None
+                else:
+                    cat = request.POST['category']
+                request.user.transfer(request.POST.get('source', 'Unknown'), amount, cat)
         except Exception as e:
             return HttpResponse(str(e))
 
@@ -42,9 +45,9 @@ def budget(request):
             return HttpResponse('Invalid amount')
         request.user.create_budget(goal_name, amount)
 
-    budgets = list(request.user.get_budgets().values('id', 'goal_name', 'amount', 'spent', 'date_created'))
-    budgets_json = json.dumps(budgets, cls=DjangoJSONEncoder)
-    return render(request, 'budget.html', {'budgets': budgets, 'budgets_json': budgets_json})
+    budgets = request.user.get_budgets().values('id', 'goal_name', 'amount', 'spent', 'date_created', 'next_refresh')
+    budgets_json = json.dumps(list(budgets), default=str)
+    return render(request, 'budget.html', {'budgets': list(budgets), 'budgets_json': budgets_json})
 
 @login_required(login_url='/log/')
 def delete_transaction(request, id):

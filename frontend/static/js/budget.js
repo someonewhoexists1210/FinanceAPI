@@ -19,10 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
     });
 
-
-    const budgetsElement = document.getElementById('budgets-data');
-    const budgets = JSON.parse(budgetsElement.value);
-    console.log(budgets);
+    const budgets = JSON.parse(document.getElementById('budget-data').textContent);
     budgets.forEach(budget => {
         const ctx = document.getElementById(`chart-${budget.id}`).getContext('2d');
         charts[budget.id] = new Chart(ctx, {
@@ -45,4 +42,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-

@@ -39,6 +39,7 @@
             <th>Amount</th>
             <th>Spent</th>
             <th>Date</th>
+            <th>Refresh Date</th>
             <th>Action</th>
         </tr>
         {% for budget in budgets %}
@@ -47,6 +48,7 @@
                 <td>{{ budget.amount }}</td>
                 <td>{{ budget.spent }}</td>
                 <td>{{ budget.date_created }}</td>
+                <td>{{ budget.next_refresh }}</td>
                 <td><button class="delete" data-id="{{ budget.id }}">Delete</button></td>
             </tr>
         {% endfor %}
@@ -54,5 +56,7 @@
 </div>
 
 <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
-<input type="hidden" id="budgets-data" value="{{ budgets_json }}">
+<script id="budget-data" type="application/json">
+    {{ budgets_json|safe }}
+</script>
 {% endblock %}

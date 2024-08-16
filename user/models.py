@@ -55,9 +55,11 @@ class Transaction(models.Model):
         super().save(*args, **kwargs)
 
 class BudgetGoal(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='budget_goals')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     goal_name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    spent = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return self.goal_name + ' - ' + str(self.amount)
+        return self.goal_name

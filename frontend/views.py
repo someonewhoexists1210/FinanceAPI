@@ -1,5 +1,6 @@
 from decimal import Decimal
-
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 from user.models import CustomUser as User
 from django.contrib.auth.decorators import login_required
@@ -31,6 +32,7 @@ def transaction(request):
     transactions = request.user.get_transactions()
     return render(request, 'transaction.html', {'transactions': transactions})
 
+
 @login_required(login_url='/log/')
 def budget(request):
     if request.method == 'POST':
@@ -41,8 +43,9 @@ def budget(request):
         request.user.create_budget(goal_name, amount)
 
     budgets = request.user.get_budgets()
-    return HttpResponse(budgets)
-    return render(request, 'budget.html', {'budgets': budgets})
+    print(budgets.values('goal_name', 'amount'))
+    budget_data = json.dumps(list(budgets.values('goal_name', 'amount')), cls=DjangoJSONEncoder)
+    return render(request, 'budget.html', {'budgets': budgets, 'budget_data': budget_data})
 
 @login_required(login_url='/log/')
 def delete_transaction(request, id):

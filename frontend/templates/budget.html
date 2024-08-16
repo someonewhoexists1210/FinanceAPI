@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra %} 
+<link rel="stylesheet" href="{% static 'css/budget.css' %}"> 
+<script src="{% static 'js/budget.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<h2 id="title">Budget Overview</h2>
+<div id="budget-form">
+    <h3>Create a New Budget</h3>
+    <form method="POST" action="{% url 'budget' %}">
+        {% csrf_token %}
+        <label for="goal_name">Goal Name:</label>
+        <input name="goal_name" id="goal_name" required>
+        <br>
+        <label for="amount">Amount:</label>
+        <input type="number" name="amount" id="amount" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<div id="chart-container">
+    <canvas id="budgetChart"></canvas>
+</div>
+
+<div id='list'>
+    <h3>Your Budgets</h3>
+    <canvas id='budgetChart'></canvas>
+</div>
+
+<input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+<input type="hidden" id="budget_data" value="{{ budget_data }}">
+
+{% endblock %}

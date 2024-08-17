@@ -6,7 +6,7 @@
 
 {% block content %}
     {% for goal in goals %}
-        <h2>{{ goal.goal_name }}</h2>
+        <h3>{{ goal.goal_name }}</h3>
         <p>Amount: {{ goal.target_amount }}</p>
         <p>Start Date: {{ goal.created_at }}</p>
         <p>End Date: {{ goal.due_date }}</p>

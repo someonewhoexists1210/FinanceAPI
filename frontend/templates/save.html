@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Finance{% endblock %}
+
+{% block content %}
+    {% for goal in goals %}
+        <h2>{{ goal.goal_name }}</h2>
+        <p>Amount: {{ goal.target_amount }}</p>
+        <p>Start Date: {{ goal.created_at }}</p>
+        <p>End Date: {{ goal.due_date }}</p>
+        <p>Completed: {{ goal.current_amount }}</p>
+    {% endfor %}
+    <form>
+        {% csrf_token %}
+        <label for="goal">Select Goal:</label>
+        <select name="id" id="goal" required>
+            {% for goal in goals %}
+                <option value="{{ goal.id }}">{{ goal.goal_name }}</option>
+            {% endfor %}
+        </select>
+        <label for="amount">Target Amount:</label>
+        <input type="number" id="amount" name="amount" required><br>
+    
+        <input type="submit" value="Save">
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('form').onsubmit = function() {
+                const amount = document.querySelector('#amount').value;
+                if (amount < 0) {
+                    alert('Amount must be greater than 0');
+                    return false;
+                }
+                const id = document.querySelector('select[name="id"]').value;
+                const form = document.querySelector('form');
+                form.action = "{% url 'save' %}" + id + '/';
+                form.method = 'POST';
+                form.submit();
+            }
+        });
+    </script>
+        
+{% endblock %}

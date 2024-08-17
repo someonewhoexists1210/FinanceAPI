@@ -72,3 +72,14 @@ def finance_goals(request):
     finance_goals = FinancialGoal.objects.filter(user=request.user)
     return render(request, 'finance.html', {'goals': finance_goals})
 
+@login_required(login_url='/log/')
+def save(request, id=None):
+    if request.method == 'POST':
+        amount = Decimal(request.POST['amount'])
+        goal = FinancialGoal.objects.get(id=id)
+        if goal.current_amount + amount > goal.target_amount:
+            return render(request, 'save.html', {'goals': FinancialGoal.objects.filter(user=request.user), 'completed': goal.id})
+        goal.current_amount += amount  
+        goal.save()     
+        return redirect('/finance-goals/')
+    return render(request, 'save.html', {'goals': FinancialGoal.objects.filter(user=request.user)})

@@ -8,4 +8,6 @@ urlpatterns = [
     path('delete-budget/<int:id>/', views.delete_budget, name='delete_budget'),
     path('budget/', views.budget, name='budget'),
     path('finance-goals/', views.finance_goals, name='finance_goals'),
+    path('save/<int:id>/', views.save, name='save_post'),
+    path('save/', views.save, name='save'),
 ]

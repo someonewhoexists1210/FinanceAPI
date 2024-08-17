@@ -9,7 +9,17 @@
         <p>Start Date: {{ goal.created_at }}</p>
         <p>End Date: {{ goal.due_date }}</p>
         <p>Completed: {{ goal.current_amount }}</p>
+    
+        {% if goal.due_date < date.today %}
+            <div id="myModal" class="modal" style='display: none;'>
+                <div class="modal-content">
+                    <span id="close">&times;</span>
+                    <p>The due date for your goal {{ goal.goal_name }} has passed</p>
+                </div>
+            </div>
+        {% endif %}
     {% endfor %}
+
     <form method="POST" action="{% url 'finance_goals' %}">
         {% csrf_token %}
         <label for="goal_name">Goal Name:</label>
@@ -20,4 +30,28 @@
         <input type="date" id="due_date" name="due_date" required><br>
         <input type="submit" value="Create Goal">
     </form>
+    <script> 
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentIndex = 0;
+            let models = document.querySelectorAll('.modal');
+
+            function displayNextModel() {
+                if (currentIndex < models.length) {
+                    models[currentIndex].style.display = 'block';
+                    currentIndex++;
+                }
+            }
+
+            function closeModal() {
+                models[currentIndex - 1].style.display = 'none';
+                displayNextModel();
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                displayNextModel();
+                let closeButton = document.getElementById('close');
+                closeButton.addEventListener('click', closeModal);
+            });
+        });
+    </script>
 {% endblock %}

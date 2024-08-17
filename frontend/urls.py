@@ -10,4 +10,5 @@ urlpatterns = [
     path('finance-goals/', views.finance_goals, name='finance_goals'),
     path('save/<int:id>/', views.save, name='save_post'),
     path('save/', views.save, name='save'),
+    path('delete_goal/<int:id>/', views.delete_goal, name='delete_goal'),
 ]

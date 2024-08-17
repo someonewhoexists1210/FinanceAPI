@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Finance{% endblock %}
+
+{% block extra %} <link rel="stylesheet" href="{% static 'css/save.css' %}"> {% endblock %}
 
 {% block content %}
     {% for goal in goals %}
@@ -10,7 +12,19 @@
         <p>End Date: {{ goal.due_date }}</p>
         <p>Completed: {{ goal.current_amount }}</p>
     {% endfor %}
-    <form>
+
+    {% if completed %}
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+            <span id="close">&times;</span>
+            <p>Goal has been completed!!!!</p>
+            <p>Your goal will be deleted</p>
+            </div>
+        </div>
+    {% endif %}
+
+    <h2>Save Money</h2>
+    <form method="POST" action=''>
         {% csrf_token %}
         <label for="goal">Select Goal:</label>
         <select name="id" id="goal" required>
@@ -25,6 +39,13 @@
     </form>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            if ("{{ completed }}"){
+                document.getElementById('myModal').style.display = 'block';
+                document.getElementById('close').addEventListener('click', function() {
+                    document.getElementById('myModal').style.display = 'none';
+                    window.location.href = "/delete_goal/{{ completed }}/"
+                });
+            }
             document.querySelector('form').onsubmit = function() {
                 const amount = document.querySelector('#amount').value;
                 if (amount < 0) {
@@ -33,8 +54,7 @@
                 }
                 const id = document.querySelector('select[name="id"]').value;
                 const form = document.querySelector('form');
-                form.action = "{% url 'save' %}" + id + '/';
-                form.method = 'POST';
+                form.action = `${id}/`;
                 form.submit();
             }
         });

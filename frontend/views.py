@@ -80,6 +80,13 @@ def save(request, id=None):
         if goal.current_amount + amount > goal.target_amount:
             return render(request, 'save.html', {'goals': FinancialGoal.objects.filter(user=request.user), 'completed': goal.id})
         goal.current_amount += amount  
+        request.user.balance -= amount
+        request.user.save()
         goal.save()     
         return redirect('/finance-goals/')
     return render(request, 'save.html', {'goals': FinancialGoal.objects.filter(user=request.user)})
+
+@login_required(login_url='/log/')
+def delete_goal(request, id):
+    FinancialGoal.objects.get(id=id).delete()
+    return redirect('/finance-goals/')

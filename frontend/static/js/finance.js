@@ -1,4 +1,7 @@
 
+function deleteGoal(id){
+    window.location.href = '/delete_goal/' + id;
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     

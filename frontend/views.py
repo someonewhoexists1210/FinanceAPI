@@ -17,14 +17,14 @@ def transaction(request):
         print(request.POST['category'])
 
         if amount <= 0:
-            return HttpResponse('Invalid amount')
+            return error(request, 'Invalid amount')
 
         try:
             if isReciever:
                 request.user.recieve(request.POST.get('source', 'Unknown'), amount)
             else:
                 if amount > request.user.balance:
-                    return HttpResponse('Insufficient balance')
+                    return error(request, 'Insufficient funds')
                 if not request.POST['category'] or request.POST['category'] == 'None':
                     cat = None
                 else:
@@ -43,7 +43,7 @@ def budget(request):
         amount = Decimal(request.POST['amount'])
         goal_name = request.POST['goal_name']
         if amount <= 0:
-            return HttpResponse('Invalid amount')
+            return error(request, 'Invalid amount')
         BudgetGoal.objects.create(user=request.user, goal_name=goal_name, amount=amount)
 
     budgets = request.user.get_budgets().values('id', 'goal_name', 'amount', 'spent', 'date_created', 'next_refresh')
@@ -57,7 +57,7 @@ def delete_transaction(request, id):
 
 @login_required(login_url='/log/')
 def delete_budget(request, id):
-    BudgetGoal.objects.get(user=request.user, id=id).delete()
+    BudgetGoal.objects.get(id=id).delete()
     return redirect('/budget/')
 
 @login_required(login_url='/log/')
@@ -67,7 +67,9 @@ def finance_goals(request):
         goal_name = request.POST['goal_name']
         due_date = request.POST['due_date']
         if target_amount <= 0:
-            return HttpResponse('Invalid amount')
+            return error(request, 'Invalid amount')
+        if FinancialGoal.objects.filter(user=request.user, goal_name=goal_name).exists():
+            return error(request, 'Goal already exists')
         FinancialGoal.objects.create(user=request.user, goal_name=goal_name, target_amount=target_amount, due_date=due_date)
     finance_goals = FinancialGoal.objects.filter(user=request.user)
     return render(request, 'finance.html', {'goals': finance_goals})
@@ -90,3 +92,6 @@ def save(request, id=None):
 def delete_goal(request, id):
     FinancialGoal.objects.get(id=id).delete()
     return redirect('/finance-goals/')
+
+def error(request, err):
+    return render(request, 'error.html', {'error': err})

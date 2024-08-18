@@ -6,11 +6,18 @@
 
 {% block content %}
     {% for goal in goals %}
+    <div class='info'>
         <h3>{{ goal.goal_name }}</h3>
         <p>Amount: {{ goal.target_amount }}</p>
         <p>Start Date: {{ goal.created_at }}</p>
         <p>End Date: {{ goal.due_date }}</p>
         <p>Completed: {{ goal.current_amount }}</p>
+        <div class="progress-bar-container">
+            <div class="progress-bar" style="width: {{ goal.progress }}%;">
+                <span class="progress-text">{{ goal.progress }}%</span>
+            </div>
+        </div>
+    </div>
     {% endfor %}
 
     {% if completed %}

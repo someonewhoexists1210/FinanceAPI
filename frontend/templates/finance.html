@@ -16,6 +16,12 @@
             <p>Start Date: {{ goal.created_at }}</p>
             <p>End Date: {{ goal.due_date }}</p>
             <p>Completed: {{ goal.current_amount }}</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ goal.progress }}%;">
+                    <span class="progress-text">{{ goal.progress }}%</span>
+                </div>
+            </div>
+            <button id='delete' onclick="deleteGoal({{ goal.id }})">Delete</button>
 
             {% now "M d, Y" as today %}
             {% if goal.due_date|date:"M d, Y" <= today %}

@@ -74,6 +74,7 @@ class FinancialGoal(models.Model):
     def __str__(self):
         return self.goal_name
 
+    @property
     def progress(self):
         return (self.current_amount / self.target_amount) * 100
     

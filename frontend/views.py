@@ -1,7 +1,7 @@
 from decimal import Decimal
 import json
 from django.http import HttpResponse
-from user.models import FinancialGoal, BudgetGoal, Transaction
+from user.models import FinancialGoal, BudgetGoal, Transaction, RecurringTransaction
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
@@ -92,6 +92,27 @@ def save(request, id=None):
 def delete_goal(request, id):
     FinancialGoal.objects.get(id=id).delete()
     return redirect('/finance-goals/')
+
+@login_required(login_url='/log/')
+def get_recurring(request):
+    if request.method == 'POST':
+        amount = Decimal(request.POST['amount'])
+        decription = request.POST['description']
+        frequency = request.POST['frequency']
+        receive = request.POST['receive']
+
+        if amount <= 0:
+            return error(request, 'Invalid amount')
+        RecurringTransaction(
+            user=request.user, 
+            amount=amount, 
+            description=decription, 
+            frequency=frequency,
+            receive=receive
+        ).save()
+        
+    recurring = RecurringTransaction.objects.filter(user=request.user)
+    return render(request, 'recurring.html', {'recurring': recurring})
 
 def error(request, err):
     return render(request, 'error.html', {'error': err})

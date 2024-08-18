@@ -1,8 +1,8 @@
-from datetime import timedelta
+import calendar
+from datetime import datetime, timedelta
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserManager
-from decimal import Decimal
 
 # Create your models here.
 class UserManager(DefaultUserManager):
@@ -82,6 +82,48 @@ class FinancialGoal(models.Model):
         self.last_updated = timezone.now()
         super().save(*args, **kwargs)
     
+class RecurringTransaction(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.CharField(max_length=255)
+    start_date = models.DateField(auto_now_add=True)
+    frequency = models.CharField(max_length=50, choices=[('daily', 'Daily'), ('weekly', 'Weekly'), ('monthly', 'Monthly')])
+    due_date = models.DateField()
+    receive = models.BooleanField(default=False)
+    last_transaction = models.DateField(null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.due_date:
+            self.due_date = self.next_due(self.start_date)
+        super().save(*args, **kwargs)
+
+    def next_due(self, from_date=None):
+        if not from_date:
+            from_date = self.next_due_date
+        if self.frequency == 'daily':
+            return from_date + timedelta(days=1)
+        elif self.frequency == 'weekly':
+            return from_date + timedelta(weeks=1)
+        elif self.frequency == 'monthly':
+            year = from_date.year
+            month = from_date.month + 1
+            if month > 12:
+                month = 1
+                year += 1
+            day = min(from_date.day, calendar.monthrange(year, month)[1])
+            return datetime(year, month, day).date()
+        return None
+    
+    def transaction(self):
+        if self.receive:
+            self.user.recieve(self.description, self.amount)
+        else:
+            self.user.transfer(self.description, self.amount)
+        self.start_date = self.due_date
+        self.last_transaction = self.next_due()
+        self.save()
+    
 class Transaction(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user', null=True)
@@ -91,6 +133,7 @@ class Transaction(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     category = models.ForeignKey(BudgetGoal, on_delete=models.SET_NULL, null=True, related_name='transactions')
+    recurring = models.ForeignKey(RecurringTransaction, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f'''Transaction: {str(self) if self.isReciever else self.source}{self.amount} 
@@ -103,4 +146,3 @@ class Transaction(models.Model):
             self.category.spent += self.amount
             self.category.save()
         super().save(*args, **kwargs)
-

@@ -45,7 +45,11 @@ class BudgetGoal(models.Model):
     spent = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     last_refreshed = models.DateTimeField(auto_now=True, null=True)
-    next_refresh = models.DateTimeField(null=True, default=timezone.now() + timedelta(days=30))
+    next_refresh = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        self.next_refresh = self.last_refreshed + timedelta(days=30)
+        super().save(*args, **kwargs)
 
     def refresh_date(self):
         return self.last_refreshed + timedelta(days=30)
@@ -55,7 +59,6 @@ class BudgetGoal(models.Model):
             self.spent = 0
             self.last_refresh = timezone.now()
             self.next_refresh = self.refresh_date()
-            self.spent = 0
             self.save()
         
     def __str__(self):
@@ -94,7 +97,8 @@ class RecurringTransaction(models.Model):
     last_transaction = models.DateField(null=True)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        if not self.pk:
+            super().save(*args, **kwargs)
         if not self.due_date:
             self.due_date = self.next_due(self.start_date)
         super().save(*args, **kwargs)
@@ -135,8 +139,8 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    category = models.ForeignKey(BudgetGoal, on_delete=models.SET_NULL, null=True, related_name='transactions')
-    recurring = models.ForeignKey(RecurringTransaction, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(BudgetGoal, on_delete=models.CASCADE, null=True, related_name='transactions')
+    recurring = models.ForeignKey(RecurringTransaction, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f'''Transaction: {str(self) if self.isReciever else self.source}{self.amount} 

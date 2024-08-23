@@ -99,7 +99,9 @@ def get_recurring(request):
         amount = Decimal(request.POST['amount'])
         decription = request.POST['description']
         frequency = request.POST['frequency']
-        receive = request.POST['receive'] == 'on'
+        receive = False
+        if request.POST.get('receive'):
+            recieve = True
 
         if amount <= 0:
             return error(request, 'Invalid amount')
@@ -113,6 +115,10 @@ def get_recurring(request):
         
     recurring = RecurringTransaction.objects.filter(user=request.user)
     return render(request, 'recurring.html', {'recurring': recurring})
+
+def delete_recurring(request, id):
+    RecurringTransaction.objects.get(id=id).delete()
+    return redirect('/recurring/')
 
 def error(request, err):
     return render(request, 'error.html', {'error': err})

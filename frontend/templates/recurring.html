@@ -42,6 +42,7 @@
                 <th>Due Date</th>
                 <th>Receive</th>
                 <th>Last Transaction</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -54,6 +55,12 @@
                     <td>{{ transaction.due_date }}</td>
                     <td>{{ transaction.receive }}</td>
                     <td>{{ transaction.last_transaction }}</td>
+                    <td>
+                        <form method="POST" action="/delete_recurring/{{ transaction.id }}/">
+                            {% csrf_token %}
+                            <input type="submit" value="Delete">
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

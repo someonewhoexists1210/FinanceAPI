@@ -12,4 +12,5 @@ urlpatterns = [
     path('save/', views.save, name='save'),
     path('delete_goal/<int:id>/', views.delete_goal, name='delete_goal'),
     path('recurring/', views.get_recurring, name='recurring'),
+    path('delete_recurring/<int:id>/', views.delete_recurring, name='delete_recurring'),
 ]

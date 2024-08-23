@@ -122,6 +122,10 @@ class RecurringTransaction(models.Model):
             return from_date + timedelta(days=365 if not calendar.isleap(from_date.year) else 366)
         return None
     
+    def refresh(self):
+        if self.due_date <= timezone.now():
+            self.transaction()
+    
     def transaction(self):
         if self.receive:
             self.user.recieve(self.description, self.amount)

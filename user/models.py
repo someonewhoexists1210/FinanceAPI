@@ -88,19 +88,20 @@ class RecurringTransaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=255)
     start_date = models.DateField(auto_now_add=True)
-    frequency = models.CharField(max_length=50, choices=[('daily', 'Daily'), ('weekly', 'Weekly'), ('monthly', 'Monthly')])
-    due_date = models.DateField()
+    frequency = models.CharField(max_length=50, choices=[('daily', 'Daily'), ('weekly', 'Weekly'), ('monthly', 'Monthly'), ('yearly', 'Yearly')])
+    due_date = models.DateField(null=True)
     receive = models.BooleanField(default=False)
     last_transaction = models.DateField(null=True)
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         if not self.due_date:
             self.due_date = self.next_due(self.start_date)
         super().save(*args, **kwargs)
 
     def next_due(self, from_date=None):
         if not from_date:
-            from_date = self.next_due_date
+            from_date = self.due_date
         if self.frequency == 'daily':
             return from_date + timedelta(days=1)
         elif self.frequency == 'weekly':
@@ -113,6 +114,8 @@ class RecurringTransaction(models.Model):
                 year += 1
             day = min(from_date.day, calendar.monthrange(year, month)[1])
             return datetime(year, month, day).date()
+        elif self.frequency == 'yearly':
+            return from_date + timedelta(days=365 if not calendar.isleap(from_date.year) else 366)
         return None
     
     def transaction(self):
@@ -121,7 +124,7 @@ class RecurringTransaction(models.Model):
         else:
             self.user.transfer(self.description, self.amount)
         self.start_date = self.due_date
-        self.last_transaction = self.next_due()
+        self.last_transaction = timezone.now()
         self.save()
     
 class Transaction(models.Model):

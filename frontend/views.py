@@ -99,7 +99,7 @@ def get_recurring(request):
         amount = Decimal(request.POST['amount'])
         decription = request.POST['description']
         frequency = request.POST['frequency']
-        receive = request.POST['receive']
+        receive = request.POST['receive'] == 'on'
 
         if amount <= 0:
             return error(request, 'Invalid amount')

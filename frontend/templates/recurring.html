@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form method="POST" action="{% url 'recurring' %}">
+        {% csrf_token %}
+        <label for="amount">Amount:</label>
+        <input type="number" name="amount" required>
+        <br>
+        <label for="description">Description:</label>
+        <input type="text" name="description" required>
+        <br>
+        <label for="frequency">Frequency:</label>
+        <select name="frequency" required>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        <br>
+        <label for="receive">Receive:</label>
+        <input type="checkbox" name="receive">
+        <br>
+        <input type="submit" value="Add Transaction">
+    </form>
+
+    <h2>Recurring Transactions</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Start Date</th>
+                <th>Frequency</th>
+                <th>Due Date</th>
+                <th>Receive</th>
+                <th>Last Transaction</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in recurring %}
+                <tr>
+                    <td>{{ transaction.description }}</td>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.start_date }}</td>
+                    <td>{{ transaction.frequency }}</td>
+                    <td>{{ transaction.due_date }}</td>
+                    <td>{{ transaction.receive }}</td>
+                    <td>{{ transaction.last_transaction }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+{% endblock %}

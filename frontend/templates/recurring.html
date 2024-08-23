@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block extra %}
+    <link rel="stylesheet" href="{% static 'css/recurring.css' %}">
+{% endblock %}
+
+{% block title %}Recurring Transactions{% endblock %}
 
 {% block content %}
 

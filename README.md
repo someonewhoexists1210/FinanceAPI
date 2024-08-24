@@ -9,7 +9,7 @@ The Finance Manager Website is a Django-based application that provides easy man
 - **Budgeting**: Implement budgets for specific categories
 - **Transaction**: Record transactions.
 - **Financial Goals**: Allocate money towards specific goals with due dates
-- **Recurring Transactions**: Automatically add recurring transactions(Work in progress)
+- **Recurring Transactions**: Automatically add recurring transactions
 - **User Accounts**: Secure login and account management.
 
 ## Technologies
@@ -32,9 +32,13 @@ The Finance Manager Website is a Django-based application that provides easy man
    - Visit the Finance page to make different finance goals
    - You can visit the save page to contribute to those goals
 
+4. **Recurring Transactions**
+   - Visit the Recurring page to add a recurring transaction
+   - Now you don't have to worry about manually adding inn transaction every time, the app will do it for you
+
 ## Deployment
 
-The project is deployed at tbd.com
+The project is deployed at https://finance.someonewhoexists.hackclub.app
 
 ## Contributing
 Contributions are welcome! If you'd like to set up the project locally, follow these steps:
@@ -42,15 +46,15 @@ Contributions are welcome! If you'd like to set up the project locally, follow t
 1. Clone the Repository
 ```bash
   git clone https://github.com/someonewhoexists1210/FinanceAPI.git
-  cd WeatherAPI
+  cd FinanceAPI
 ```
 2. Create a Virtual Environment
 
 ```bash
 
   python -m venv venv
-  Activate the Virtual Environment
 ```
+3. Activate the Virtual Environment
 
 ### On Windows
 ```bash
@@ -62,20 +66,20 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-3. Install Dependencies
+4. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Run Migrations
+5. Run Migrations
 
 ```bash
 python manage.py migrate
 ```
 
 
-5. Run the Development Server
+6. Run the Development Server
 ```bash   
 python manage.py runserver
 ```

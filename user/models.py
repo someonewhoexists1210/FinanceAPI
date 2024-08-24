@@ -123,7 +123,7 @@ class RecurringTransaction(models.Model):
         return None
     
     def refresh(self):
-        if self.due_date <= timezone.now():
+        if self.due_date <= timezone.now().date():
             self.transaction()
     
     def transaction(self):

@@ -87,5 +87,8 @@ python manage.py runserver
 Access the website at http://127.0.0.1:8000/.
 Please ensure that your code adheres to the project's coding standards and includes appropriate tests before submitting a pull request.
 
+## Screenshot
+![alt text](image.png)
+
 ## Contact
 For any questions or issues, please contact [darshdiv20@gmail.com] (mailto:darshdiv20@gmail.com)
